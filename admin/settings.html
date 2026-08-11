@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Settings - KK Shop Admin</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/forms.css">
+</head>
+<body>
+  <aside class="sidebar">
+    <div class="brand">KK <span>Shop Admin</span></div>
+    <ul class="nav-list">
+      <li><a href="dashboard.html" class="nav-link">Dashboard</a></li>
+      <li><a href="products.html" class="nav-link">Products</a></li>
+      <li><a href="orders.html" class="nav-link">Orders</a></li>
+      <li><a href="users.html" class="nav-link">Users</a></li>
+      <li><a href="settings.html" class="nav-link active">Settings</a></li>
+    </ul>
+  </aside>
+
+  <div class="admin-wrapper">
+    <header class="top-bar">
+      <h2 style="font-size: 1.25rem; font-weight: 700;">Store Settings</h2>
+    </header>
+
+    <main class="content-area">
+      <form id="settings-form" class="glass-card" style="max-width: 600px;">
+        <div class="form-group">
+          <label class="form-label">Store Name</label>
+          <input type="text" id="set-store-name" class="form-control" value="KK Shop">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Support Telegram Username</label>
+          <input type="text" id="set-telegram" class="form-control" value="@DEVBRONX">
+        </div>
+        <button type="submit" class="btn btn-primary" style="margin-top: 1rem;">Save Settings</button>
+      </form>
+    </main>
+  </div>
+
+  <script type="module" src="js/app.js"></script>
+  <script type="module">
+    import { fetchStoreSettings, saveStoreSettings } from "./firebase/firestore.js";
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      const settings = await fetchStoreSettings();
+      if (settings) {
+        if (settings.storeName) document.getElementById('set-store-name').value = settings.storeName;
+        if (settings.telegramSupport) document.getElementById('set-telegram').value = settings.telegramSupport;
+      }
+
+      document.getElementById('settings-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        await saveStoreSettings({
+          storeName: document.getElementById('set-store-name').value.trim(),
+          telegramSupport: document.getElementById('set-telegram').value.trim()
+        });
+        window.showToast("Settings updated successfully!");
+      });
+    });
+  </script>
+</body>
+</html>
